@@ -40,6 +40,18 @@ export async function createAppContext(config: HeadplaneConfig) {
   const auth = createAuthService({
     secret: config.server.cookie_secret,
     headscaleApiKey,
+    proxyAuth: config.server.proxy_auth
+      ? {
+          enabled: config.server.proxy_auth.enabled,
+          allowedCidrs: config.server.proxy_auth.allowed_cidrs,
+          trustedProxyCidrs: config.server.proxy_auth.trusted_proxy_cidrs,
+          ipHeader: config.server.proxy_auth.ip_header,
+          userHeader: config.server.proxy_auth.user_header,
+          emailHeader: config.server.proxy_auth.email_header,
+          nameHeader: config.server.proxy_auth.name_header,
+          pictureHeader: config.server.proxy_auth.picture_header,
+        }
+      : undefined,
     db,
     cookie: {
       name: "_hp_auth",
@@ -139,6 +151,7 @@ function buildOidc(
       usePkce: config.oidc.use_pkce,
       scope: config.oidc.scope,
       subjectClaims: config.oidc.subject_claims,
+      roleClaim: config.oidc.role_claim,
       allowWeakRsaKeys: config.oidc.allow_weak_rsa_keys,
       extraParams: config.oidc.extra_params,
       profilePictureSource: config.oidc.profile_picture_source,
